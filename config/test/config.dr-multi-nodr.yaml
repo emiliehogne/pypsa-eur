@@ -1,0 +1,6 @@
+run:
+  name: dr-multi-nodr
+
+load:
+  demand_response:
+    enable: false

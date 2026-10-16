@@ -1,0 +1,25 @@
+# Multi-country DR test: BE, NL, LU, DE, FR, 20 buses, full year 2013,
+# operations only (no new capacity). Layer on top of config.dr-test.yaml.
+run:
+  name: dr-multi
+
+countries: [BE, NL, LU, DE, FR]
+
+clustering:
+  cluster_network:
+    n_clusters: 20
+
+electricity:
+  extendable_carriers:    # operations only: nothing new can be built
+    Generator: []
+    StorageUnit: []
+    Store: []
+    Link: []
+
+solving:
+  options:
+    load_shedding:
+      enable: true
+      all_carriers: false   # not on DR buses
+      carriers:
+        AC: 100000          # €/MWh, safety valve on electricity buses only
