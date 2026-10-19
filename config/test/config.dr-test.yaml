@@ -18,7 +18,7 @@
 tutorial: true            # uses the small tutorial data bundles (fast download)
 
 run:
-  name: dr-test
+  name: belgium-co2-test
   scenarios:
     enable: false         # switch to true once the DR config block exists (see bottom)
     file: config/scenarios.dr.yaml
@@ -34,6 +34,13 @@ planning_horizons:
 
 countries:
 - BE
+
+# ---------- costs ----------
+
+costs:
+  emission_prices:
+    enable: true
+    co2: 74.35
 
 # snapshots: not overridden - inherits config.default.yaml's full year
 # (2013-01-01 to 2014-01-01), matching the atlite cutout below.
