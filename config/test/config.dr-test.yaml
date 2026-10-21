@@ -38,6 +38,7 @@ countries:
 # ---------- costs ----------
 
 costs:
+  year: 2025
   emission_prices:
     enable: true
     co2: 74.35
@@ -76,7 +77,8 @@ electricity:
   estimate_renewable_capacities:
     enable: true          # existing wind and solar from IRENA statistics
     from_powerplantmatching: true
-    year: 2020
+    from_irenastat: true
+    year: 2024
     expansion_limit: false
     technology_mapping:
       Offshore: offwind-ac
@@ -114,3 +116,4 @@ sector:
 load:
   demand_response:
     enable: true
+  fixed_year: 2025
