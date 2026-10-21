@@ -1,7 +1,7 @@
 # Multi-country DR test: BE, NL, LU, DE, FR, 20 buses, full year 2013,
 # operations only (no new capacity). Layer on top of config.dr-test.yaml.
 run:
-  name: dr-multi
+  name: MC20_w13_base_dr
 
 countries: [BE, NL, LU, DE, FR]
 
