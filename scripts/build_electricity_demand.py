@@ -328,10 +328,12 @@ if __name__ == "__main__":
         else slice(snapshots[0], snapshots[-1])
     )
 
-    load = load.loc[years].reindex(index=snapshots)
+    load = load.loc[years]
 
     # need to reindex load time series to target year
     if fixed_year:
         load.index = load.index.map(lambda t: t.replace(year=snapshots.year[0]))
+
+    load = load.reindex(index=snapshots)
 
     load.to_csv(snakemake.output[0])
