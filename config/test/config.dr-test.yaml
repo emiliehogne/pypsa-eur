@@ -15,7 +15,7 @@
 #   n = pypsa.Network("results/dr-test/networks/solved_2025.nc")
 #   n.loads, n.stores, n.statistics()
 
-tutorial: true            # uses the small tutorial data bundles (fast download)
+tutorial: false            # uses the small tutorial data bundles (fast download)
 
 run:
   name: BE5_w13_base_dr
