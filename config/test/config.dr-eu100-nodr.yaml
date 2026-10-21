@@ -1,0 +1,5 @@
+run:
+  name: EU100_w13_base_nodr
+load:
+  demand_response:
+    enable: false
