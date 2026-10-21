@@ -4,7 +4,7 @@
 #     --configfile config/test/config.dr-test.yaml config/test/config.dr-test-nodr.yaml
 
 run:
-  name: dr-test-nodr   # separate results folder, so the DR run isn't overwritten
+  name: BE5_w13_base_nodr   # separate results folder, so the DR run isn't overwritten
 
 load:
   demand_response:

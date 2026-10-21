@@ -18,7 +18,7 @@
 tutorial: true            # uses the small tutorial data bundles (fast download)
 
 run:
-  name: belgium-co2-test
+  name: BE5_w13_base_dr
   scenarios:
     enable: false         # switch to true once the DR config block exists (see bottom)
     file: config/scenarios.dr.yaml
