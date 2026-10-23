@@ -1,0 +1,12 @@
+# Shared solver settings for all thesis runs. Use as the LAST --configfile.
+# crossover off: tested on BE5, cost difference < 0.001%, shifted volumes < 1%.
+# threads only affects speed, not results.
+solving:
+  solver:
+    name: gurobi
+    options: gurobi-default
+  solver_options:
+    gurobi-default:
+      threads: 8
+      crossover: 0
+      BarConvTol: 1.e-8
