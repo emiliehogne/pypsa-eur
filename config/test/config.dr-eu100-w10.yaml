@@ -1,0 +1,16 @@
+# Full Europe DR run with 2010 weather and 100% participation (theoretical
+# potential). Layer on top of config.dr-test.yaml + config.dr-eu100.yaml.
+run:
+  name: EU100_w10_full_dr
+
+atlite:
+  default_cutout: "europe-2010-sarah3-era5"
+
+snapshots:
+  start: "2010-01-01"
+  end: "2011-01-01"
+  inclusive: left
+
+load:
+  demand_response:
+    data_dir: data/demand_response/theoretical
