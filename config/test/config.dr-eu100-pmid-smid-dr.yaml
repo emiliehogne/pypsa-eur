@@ -2,7 +2,7 @@
 # 2025 demand and costs, operations only, with medium participation rates between achievable and theorethical. 
 # Layer on top of config.dr-test.yaml.
 run:
-  name: EU100_w13_phigh_smid_dr
+  name: EU100_w13_pmid_smid_dr
 
 countries: [AL, AT, BA, BE, BG, CH, CZ, DE, DK, EE, ES, FI, FR, GB, GR, HR, HU,
             IE, IT, LT, LU, LV, ME, MK, NL, "NO", PL, PT, RO, RS, SE, SI, SK, XK]
