@@ -14,3 +14,8 @@ snapshots:
 load:
   demand_response:
     data_dir: data/demand_response/theoretical
+
+solving:
+  solver:
+    name: gurobi
+    options: gurobi-default
