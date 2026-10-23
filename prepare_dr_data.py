@@ -293,13 +293,14 @@ def read_participation_rates(cfg):
     return rates
 
 
-def apply_rates(rep, rate):
+def apply_rates(rep, rate, scale=1.0):
     """Scale each NUTS2 column by its country's participation rate."""
+    effective = 1 - scale * (1 - rate)
     country = rep.columns.str[:2]
     missing = sorted(set(country) - set(rate.index))
     if missing:
         raise ValueError(f"No participation rate for countries {missing}")
-    return rep * rate.reindex(country).to_numpy()
+    return rep * effective.reindex(country).to_numpy()
 
 
 def process(cfg):
@@ -307,8 +308,10 @@ def process(cfg):
     pcfg = cfg.get("participation") or {}
     use_rates = bool(pcfg.get("apply"))
     rates = read_participation_rates(cfg) if use_rates else None
+    scale = pcfg.get("scale", 1.0)
     out_dir = os.path.join(
-        cfg["output"]["dir"], "achievable" if use_rates else "theoretical"
+        cfg["output"]["dir"],
+        pcfg.get("output_subdir") or ("achievable" if use_rates else "theoretical"),
     )
     decimals = cfg["output"].get("decimals", 4)
     years = cfg["years"]
@@ -344,7 +347,7 @@ def process(cfg):
 
             for var, rep in series.items():
                 if use_rates:
-                    rep = apply_rates(rep, rates[dev])
+                    rep = apply_rates(rep, rates[dev], scale)
                 full = expand_to_year(rep)
                 if mapping is not None:
                     full = aggregate_to_buses(full, mapping)

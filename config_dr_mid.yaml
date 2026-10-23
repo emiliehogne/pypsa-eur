@@ -1,0 +1,45 @@
+# Configuration for prepare_dr_data.py - "participation_mid" scenario.
+# Same as config_dr.yaml, but interpolates halfway between the theoretical
+# (100% participation) and achievable (O'Reilly et al. estimated rates)
+# potential, via participation.scale. See config_dr.yaml for full comments.
+# Zenodo: https://doi.org/10.5281/zenodo.7871106
+
+retrieve:
+  enable: true
+  zenodo_record: 7871106
+  data_dir: data/oreilly
+  extra_files:
+  - metaData.Full_potential.xlsx
+  - participation_rates_country.csv
+
+devices: [AC, CP, DW, EV, FR, HP, RF, SH, TD, WH, WM]
+
+years: [2025, 2030, 2040, 2050]
+
+countries: []
+
+variables: [load, capacity, max_increase]
+
+participation:
+  apply: true
+  scale: 0.5             # 0 = theoretical (100%), 1 = achievable (real rates)
+  output_subdir: participation_mid
+  file: participation_rates_country.csv
+  device_groups:
+    AC: AC
+    CP: SH
+    DW: Wash
+    TD: Wash
+    WM: Wash
+    EV: EV
+    FR: FRRF
+    RF: FRRF
+    WH: WH
+    SH: SH
+    HP: Other
+
+nuts_to_bus:
+
+output:
+  dir: data/demand_response
+  decimals: 4
