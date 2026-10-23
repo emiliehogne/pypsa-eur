@@ -25,9 +25,13 @@ from scripts.build_electricity_demand_base import redistribute_attribute
 
 logger = logging.getLogger(__name__)
 
-# The O'Reilly dataset uses Eurostat NUTS codes, PyPSA-Eur config uses ISO2.
-# Only Greece and the UK differ (mirrors prepare_dr_data.py).
+# The O'Reilly dataset uses Eurostat NUTS codes (EL, UK), PyPSA-Eur config
+# uses ISO2 (GR, GB). build_nuts3_shapes.py relabels the model's own NUTS
+# codes to ISO2 (NUTS_ID/level2/level3 are "GR.."/"GB.." there), so the
+# O'Reilly region codes must be relabelled the same way before they are
+# matched against nuts3_shapes.geojson.
 ISO2_TO_EUROSTAT = {"GR": "EL", "GB": "UK"}
+EUROSTAT_TO_ISO2 = {v: k for k, v in ISO2_TO_EUROSTAT.items()}
 
 CET_TO_UTC = pd.Timedelta(hours=-1)
 
@@ -36,12 +40,15 @@ def read_device_variable(fn: str, eurostat_countries: list[str]) -> pd.DataFrame
     """
     Read one prepare_dr_data.py output CSV: index (month, day, hour), one
     column per NUTS2 region, filtered to `eurostat_countries` (Eurostat-style
-    prefixes, e.g. "EL" not "GR"). Column labels are whitespace-stripped.
+    prefixes, e.g. "EL" not "GR"). Column labels are whitespace-stripped and
+    relabelled to the model's ISO2-style NUTS codes (e.g. "EL30" -> "GR30"),
+    matching the relabelling build_nuts3_shapes.py applies to the model side.
     """
     df = pd.read_csv(fn, index_col=["month", "day", "hour"])
     df.columns = df.columns.str.strip()
     if eurostat_countries:
         df = df[[c for c in df.columns if c[:2] in eurostat_countries]]
+    df.columns = [EUROSTAT_TO_ISO2.get(c[:2], c[:2]) + c[2:] for c in df.columns]
     return df
 
 
@@ -162,7 +169,7 @@ def build_demand_response_profile(
     nuts3 = gpd.read_file(nuts3_fn)
     model_codes = set(nuts3["level2"])
     if countries:
-        model_codes = {c for c in model_codes if c[:2] in eurostat_countries}
+        model_codes = {c for c in model_codes if c[:2] in countries}
     report_region_mismatch(oreilly_codes, model_codes)
 
     weights = nuts2_bus_weights(nuts3_fn, onshore_regions_fn, sorted(oreilly_codes))
