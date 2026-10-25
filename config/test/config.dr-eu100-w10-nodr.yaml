@@ -1,0 +1,8 @@
+# No-DR reference for all EU100 runs with 2010 weather.
+# Layer on top of config.dr-test.yaml + config.dr-eu100.yaml + config.dr-eu100-w10.yaml.
+run:
+  name: EU100_w10_nodr
+
+load:
+  demand_response:
+    enable: false
