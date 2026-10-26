@@ -1,0 +1,16 @@
+# Full Europe DR run with 2020 weather and 100% participation (theoretical
+# potential). Layer on top of config.dr-test.yaml + config.dr-eu100.yaml.
+run:
+  name: EU100_w20_full_dr
+
+atlite:
+  default_cutout: "europe-2020-sarah3-era5"
+
+snapshots:
+  start: "2020-01-01"
+  end: "2021-01-01"
+  inclusive: left
+
+load:
+  demand_response:
+    data_dir: data/demand_response/theoretical
