@@ -1,0 +1,58 @@
+# Full Europe DR run: all PyPSA-Eur countries, 100 nodes, full year 2013 weather,
+# 2025 demand and costs, operations only. Layer on top of config.dr-test.yaml.
+# Low shift times and the middle participation rate
+
+
+
+run:
+  name: EU100_w13_pmid_slow_dr
+
+countries: [AL, AT, BA, BE, BG, CH, CZ, DE, DK, EE, ES, FI, FR, GB, GR, HR, HU,
+            IE, IT, LT, LU, LV, ME, MK, NL, "NO", PL, PT, RO, RS, SE, SI, SK, XK]
+
+clustering:
+  cluster_network:
+    n_clusters: 100
+
+electricity:
+  extendable_carriers:    # operations only: nothing new can be built
+    Generator: []
+    StorageUnit: []
+    Store: []
+    Link: []
+
+solving:
+  options:
+    load_shedding:
+      enable: true
+      all_carriers: false
+      carriers:
+        AC: 100000
+        
+load:
+  demand_response:
+    data_dir: data/demand_response/participation_mid
+
+    devices:
+      WM:
+        shift_time: 3
+      TD:
+        shift_time: 3
+      DW:
+        shift_time: 3
+      EV:
+        shift_time: 4
+      RF:
+        shift_time: 1
+      FR:
+        shift_time: 1
+      AC:
+        shift_time: 1
+      CP:
+        shift_time: 1
+      HP:
+        shift_time: 1
+      SH:
+        shift_time: 8
+      WH:
+        shift_time: 8
