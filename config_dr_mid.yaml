@@ -36,7 +36,7 @@ participation:
     RF: FRRF
     WH: WH
     SH: SH
-    HP: Other
+    HP: SH
 
 nuts_to_bus:
 

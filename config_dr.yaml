@@ -42,7 +42,7 @@ participation: #if true, then the participation rates are applied, if false then
   # Which column of the file applies to each device.
   # Checked against the authors' acheivable_NUTS2_summary.csv:
   #   AC, CP, DW, EV reproduce it exactly (note: CP uses the SH column).
-  # FR, RF, TD, WM, WH, SH follow the column names; HP is an assumption.
+  # FR, RF, TD, WM, WH, SH follow the column names.
   device_groups:
     AC: AC
     CP: SH
@@ -54,7 +54,7 @@ participation: #if true, then the participation rates are applied, if false then
     RF: FRRF
     WH: WH
     SH: SH
-    HP: Other
+    HP: SH
 
 # Optional CSV with columns nutscode,bus[,weight] to aggregate NUTS2 regions
 # to PyPSA-Eur buses. Leave null to keep NUTS2 columns.
