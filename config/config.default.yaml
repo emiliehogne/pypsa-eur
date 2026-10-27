@@ -498,6 +498,7 @@ load:
     population: 0.4
   demand_response:
     enable: false
+    group_by_shift: false   # merge devices with equal shift_time and direction
     data_dir: data/demand_response/achievable
     devices:
       WM:

@@ -1167,3 +1167,20 @@ def _load_data_version(file: str | Path, validate: bool = True) -> pd.DataFrame:
         data_versions = VersionsSchema.validate(data_versions)
 
     return data_versions
+    
+def dr_device_groups(devices: dict, group_by_shift: bool = False) -> dict:
+    """
+    Group demand response devices with equal shift_time and direction.
+
+    Returns name -> {"shift_time", "direction", "members"}. Without grouping,
+    every device is its own group, so the model is unchanged.
+    """
+    if not group_by_shift:
+        return {d: {**c, "members": [d]} for d, c in devices.items()}
+    groups = {}
+    for dev, cfg in devices.items():
+        groups.setdefault((cfg["shift_time"], cfg["direction"]), []).append(dev)
+    return {
+        "-".join(m): {"shift_time": s, "direction": d, "members": m}
+        for (s, d), m in groups.items()
+    }

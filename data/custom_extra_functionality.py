@@ -2,12 +2,14 @@
 #
 # SPDX-License-Identifier: MIT
 
+from scripts._helpers import dr_device_groups
 
 def custom_extra_functionality(n, snapshots, snakemake):
     """
     Add custom extra functionality constraints.
     """
-    devices = snakemake.config["load"]["demand_response"]["devices"]
+    dr = snakemake.config["load"]["demand_response"]
+    devices = dr_device_groups(dr["devices"], dr.get("group_by_shift", False))
     for dev, cfg in devices.items():
         S = cfg["shift_time"]
         DR_i = n.stores.index[n.stores.carrier == f"DR {dev}"]

@@ -676,6 +676,7 @@ rule build_demand_response_profile:
         snapshots=config_provider("snapshots"),
         drop_leap_day=config_provider("enable", "drop_leap_day"),
         devices=config_provider("load", "demand_response", "devices"),
+        group_by_shift=config_provider("load", "demand_response", "group_by_shift", default=False),
         countries=config_provider("countries"),
     message:
         "Building demand-response profiles for horizon {wildcards.horizon}"

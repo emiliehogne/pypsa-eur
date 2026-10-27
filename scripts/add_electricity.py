@@ -63,6 +63,7 @@ from scripts._helpers import (
     PYPSA_V1,
     rename_techs,
     update_p_nom_max,
+    dr_device_groups
 )
 
 if PYPSA_V1:
@@ -1339,7 +1340,11 @@ def main(
 
     dr = params.load["demand_response"]
     if dr["enable"]:
-        attach_demand_response(n, inputs["dr_profile"], dr["devices"])
+            attach_demand_response(
+            n,
+            inputs["dr_profile"],
+            dr_device_groups(dr["devices"], dr.get("group_by_shift", False)),
+        )
 
     set_transmission_costs(
         n,

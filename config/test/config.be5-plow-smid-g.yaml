@@ -1,0 +1,5 @@
+run:
+  name: BE5_w13_plow_smid_g_dr
+load:
+  demand_response:
+    group_by_shift: true

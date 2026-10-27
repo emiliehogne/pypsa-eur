@@ -20,7 +20,7 @@ import geopandas as gpd
 import pandas as pd
 import xarray as xr
 
-from scripts._helpers import configure_logging, get_snapshots, set_scenario_config
+from scripts._helpers import configure_logging, get_snapshots, set_scenario_config, dr_device_groups
 from scripts.build_electricity_demand_base import redistribute_attribute
 
 logger = logging.getLogger(__name__)
@@ -229,6 +229,15 @@ if __name__ == "__main__":
         onshore_regions_fn=snakemake.input.onshore_regions,
         countries=params.countries,
     )
+    groups = dr_device_groups(params.devices, params.group_by_shift)
+    ds = xr.concat(
+        [
+            ds.sel(device=g["members"]).sum("device").assign_coords(device=name)
+            for name, g in groups.items()
+        ],
+        dim="device",
+    )
+    logger.info(f"DR groups: { {k: g['members'] for k, g in groups.items()} }")
 
     comp = dict(zlib=True, complevel=9, least_significant_digit=4)
     ds.to_netcdf(snakemake.output[0], encoding={v: comp for v in ds.data_vars})
