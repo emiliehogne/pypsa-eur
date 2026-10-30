@@ -450,7 +450,7 @@ def attach_demand_response(
     e_bounds = {"both": (-1.0, 1.0), "delay": (-1.0, 0.0), "advance": (0.0, 1.0)}
 
     #small cost on DR activation. Breaks ties so the solver does not run up and down in the same hour. 
-    dr_marginal_cost = 0.01 #€/MWh
+    dr_marginal_cost = 0.05 #€/MWh
 
 
     n.add("Carrier", [f"DR {dev}" for dev in devices])
