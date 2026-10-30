@@ -1,0 +1,31 @@
+# Full Europe DR run: all PyPSA-Eur countries, 300 nodes, full year 2013 weather, appliances grouped together by shift time
+# achievable participation, O'Reilly shift times, 0.05 activation cost,
+# 2025 demand and costs, operations only. Layer on top of config.dr-test.yaml.
+run:
+  name: EU300_grouped_w13_plow_smid_dr
+
+load:
+  demand_response:
+    group_by_shift: true
+
+countries: [AL, AT, BA, BE, BG, CH, CZ, DE, DK, EE, ES, FI, FR, GB, GR, HR, HU,
+            IE, IT, LT, LU, LV, ME, MK, NL, "NO", PL, PT, RO, RS, SE, SI, SK, XK]
+
+clustering:
+  cluster_network:
+    n_clusters: 300
+
+electricity:
+  extendable_carriers:    # operations only: nothing new can be built
+    Generator: []
+    StorageUnit: []
+    Store: []
+    Link: []
+
+solving:
+  options:
+    load_shedding:
+      enable: true
+      all_carriers: false
+      carriers:
+        AC: 100000
