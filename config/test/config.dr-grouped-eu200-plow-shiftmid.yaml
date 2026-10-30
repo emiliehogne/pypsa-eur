@@ -1,7 +1,11 @@
-# Full Europe DR run: all PyPSA-Eur countries, 200 nodes, full year 2013 weather,
+# Full Europe DR run: all PyPSA-Eur countries, 200 nodes, full year 2013 weather, appliances grouped together by shift time
 # 2025 demand and costs, operations only. Layer on top of config.dr-test.yaml.
 run:
-  name: EU200_w13_plow_smid_dr
+  name: EU200_grouped_w13_plow_smid_dr
+
+load:
+  demand_response:
+    group_by_shift: true
 
 countries: [AL, AT, BA, BE, BG, CH, CZ, DE, DK, EE, ES, FI, FR, GB, GR, HR, HU,
             IE, IT, LT, LU, LV, ME, MK, NL, "NO", PL, PT, RO, RS, SE, SI, SK, XK]
