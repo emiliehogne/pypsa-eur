@@ -1,0 +1,26 @@
+# Full Europe DR run: all PyPSA-Eur countries, 200 nodes, full year 2013 weather,
+# 2025 demand and costs, operations only. Layer on top of config.dr-test.yaml.
+run:
+  name: EU200_w13_plow_smid_dr
+
+countries: [AL, AT, BA, BE, BG, CH, CZ, DE, DK, EE, ES, FI, FR, GB, GR, HR, HU,
+            IE, IT, LT, LU, LV, ME, MK, NL, "NO", PL, PT, RO, RS, SE, SI, SK, XK]
+
+clustering:
+  cluster_network:
+    n_clusters: 200
+
+electricity:
+  extendable_carriers:    # operations only: nothing new can be built
+    Generator: []
+    StorageUnit: []
+    Store: []
+    Link: []
+
+solving:
+  options:
+    load_shedding:
+      enable: true
+      all_carriers: false
+      carriers:
+        AC: 100000
