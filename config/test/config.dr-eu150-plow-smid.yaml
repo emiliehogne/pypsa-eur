@@ -1,0 +1,12 @@
+# config/test/config.eu150-plow-smid-g.yaml
+# EU150 base case, grouped. Layer on top of config.dr-test.yaml + config.dr-eu100.yaml.
+run:
+  name: EU150_w13_plow_smid_g_dr
+
+clustering:
+  cluster_network:
+    n_clusters: 150
+
+load:
+  demand_response:
+    group_by_shift: true
