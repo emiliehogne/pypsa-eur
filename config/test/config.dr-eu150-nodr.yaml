@@ -1,0 +1,11 @@
+# EU150 no-DR baseline. Layer on top of config.dr-test.yaml + config.dr-eu100.yaml.
+run:
+  name: EU150_w13_base_nodr
+
+clustering:
+  cluster_network:
+    n_clusters: 150
+
+load:
+  demand_response:
+    enable: false
