@@ -1,0 +1,14 @@
+# config/test/config.dr-eu150-pmid-smid.yaml
+# EU150, mid participation, base shift times, grouped.
+# Layer on top of config.dr-test.yaml + config.dr-eu100.yaml.
+run:
+  name: EU150_w13_pmid_smid_g_dr
+
+clustering:
+  cluster_network:
+    n_clusters: 150
+
+load:
+  demand_response:
+    data_dir: data/demand_response/participation_mid
+    group_by_shift: true
