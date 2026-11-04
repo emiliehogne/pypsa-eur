@@ -1,0 +1,14 @@
+# config/test/config.dr-eu150-phigh-smid.yaml
+# EU150, high participation, base shift times, grouped.
+# Layer on top of config.dr-test.yaml + config.dr-eu100.yaml.
+run:
+  name: EU150_w13_phigh_smid_g_dr
+
+clustering:
+  cluster_network:
+    n_clusters: 150
+
+load:
+  demand_response:
+    data_dir: data/demand_response/theoretical
+    group_by_shift: true
