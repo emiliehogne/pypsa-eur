@@ -1,0 +1,25 @@
+# config/test/config.dr-eu150-phigh-slow.yaml
+# EU150 high participation, low shift times,grouped. Layer on top of config.dr-test.yaml + config.dr-eu100.yaml.
+run:
+  name: EU150_w13_phigh_slow_g_dr
+
+clustering:
+  cluster_network:
+    n_clusters: 150
+
+load:
+  demand_response:
+    data_dir: data/demand_response/theoretical
+    group_by_shift: true
+    devices:
+      WM: {shift_time: 3}
+      TD: {shift_time: 3}
+      DW: {shift_time: 3}
+      EV: {shift_time: 4}
+      RF: {shift_time: 1}
+      FR: {shift_time: 1}
+      AC: {shift_time: 1}
+      CP: {shift_time: 1}
+      HP: {shift_time: 1}
+      SH: {shift_time: 8}
+      WH: {shift_time: 8}
