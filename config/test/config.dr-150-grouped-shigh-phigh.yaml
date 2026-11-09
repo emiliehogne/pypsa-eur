@@ -4,7 +4,7 @@
 
 
 run:
-  name: EU150_grouped_w13_phigh_shigh_dr
+  name: EU150_w13_phigh_shigh_g_dr
 
 countries: [AL, AT, BA, BE, BG, CH, CZ, DE, DK, EE, ES, FI, FR, GB, GR, HR, HU,
             IE, IT, LT, LU, LV, ME, MK, NL, "NO", PL, PT, RO, RS, SE, SI, SK, XK]
