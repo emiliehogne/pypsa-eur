@@ -15,6 +15,12 @@
 #       file: config/scenarios.dr.yaml
 #
 # Only works once load.demand_response exists in the config validation.
+#
+# NOTE: the participation_scale and shift_time_scale scenarios further below
+# are not functional - no code reads these keys, so running them currently
+# produces results identical to the base case. The thesis's actual
+# participation and shift-time sensitivities are run as separate, individually
+# committed config/test/config.dr-*.yaml files instead.
 
 # ---------- reference ----------
 

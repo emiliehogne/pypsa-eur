@@ -22,6 +22,7 @@ Steps
 
 import argparse
 import hashlib
+import logging
 import os
 import re
 import sys
@@ -30,6 +31,8 @@ import time
 import pandas as pd
 import requests
 import yaml
+
+logger = logging.getLogger(__name__)
 
 DEVICES = {
     "AC": "air conditioning",
@@ -221,7 +224,7 @@ def read_representative_days(path, years, countries):
     n_nan = int(df[year_cols].isna().sum().sum())
     df[year_cols] = df[year_cols].ffill(axis=1).bfill(axis=1)
     if n_nan:
-        print(f"    filled {n_nan} missing values in {os.path.basename(path)}")
+        logger.warning(f"    filled {n_nan} missing values in {os.path.basename(path)}")
 
     out = {}
     for y in years:

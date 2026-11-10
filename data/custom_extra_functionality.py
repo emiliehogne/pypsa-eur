@@ -10,6 +10,19 @@ def custom_extra_functionality(n, snapshots, snakemake):
     """
     dr = snakemake.config["load"]["demand_response"]
     devices = dr_device_groups(dr["devices"], dr.get("group_by_shift", False))
+
+    dr_active = n.stores.carrier.isin([f"DR {dev}" for dev in devices]).any()
+    if dr_active and not (n.snapshot_weightings.objective == 1).all():
+        raise ValueError(
+            "Demand response is enabled but snapshots are not hourly "
+            "(snapshot_weightings.objective != 1 for at least one snapshot). "
+            "The rolling shift_time recovery constraint operates on snapshot "
+            "indices, not wall-clock hours, so temporal averaging or "
+            "segmentation would silently change the physical meaning of every "
+            "device's shift time. Keep snapshots hourly when load.demand_response "
+            "is enabled."
+        )
+
     for dev, cfg in devices.items():
         S = cfg["shift_time"]
         DR_i = n.stores.index[n.stores.carrier == f"DR {dev}"]

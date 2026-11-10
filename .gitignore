@@ -100,3 +100,6 @@ doc/img/intro-workflow.svg
 # pixi environments
 .pixi/*
 !.pixi/config.toml
+
+# local-only notes (not for the upstream/thesis history)
+/docs/
