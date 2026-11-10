@@ -309,6 +309,26 @@ def add_dynamic_emission_prices(n, fn):
     n.generators.loc[affected, "marginal_cost"] = 0.0
 
 
+def deactivate_future_lines(n: pypsa.Network, planning_horizon: int) -> None:
+    """
+    Deactivate (without removing) lines and DC links whose build_year is
+    after the current planning horizon, e.g. committed transmission_projects
+    that are already present in the network but not yet built at this
+    horizon.
+    """
+    future_lines = n.lines.index[n.lines.build_year > planning_horizon]
+    n.lines.loc[future_lines, "active"] = False
+
+    dc_links = n.links.carrier == "DC" if not n.links.empty else pd.Series()
+    future_links = n.links.index[dc_links & (n.links.build_year > planning_horizon)]
+    n.links.loc[future_links, "active"] = False
+
+    logger.info(
+        f"Deactivated {len(future_lines)} line(s) and {len(future_links)} DC link(s) "
+        f"with build_year after the {planning_horizon} planning horizon."
+    )
+
+
 def set_line_s_max_pu(n, s_max_pu=0.7):
     n.lines["s_max_pu"] = s_max_pu
     logger.info(f"N-1 security margin of lines set to {s_max_pu}")
@@ -464,8 +484,11 @@ def main(
     params,
     costs: pd.DataFrame,
     nyears: float,
+    planning_horizon: int,
 ) -> None:
     logger.info("Preparing network for solving")
+
+    deactivate_future_lines(n, planning_horizon)
 
     electricity_cfg = params.electricity
 
