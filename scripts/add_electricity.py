@@ -409,6 +409,7 @@ def attach_demand_response(
     n: pypsa.Network,
     profile_fn: str,
     devices: dict,
+    activation_cost: float = 0.05,
 ) -> None:
     """
     Attach residential demand response (load shifting) to the network, one
@@ -445,12 +446,16 @@ def attach_demand_response(
     devices : dict
         Mapping device code -> {"shift_time": int, "direction": "delay" |
         "advance" | "both"}, from config load.demand_response.devices.
+    activation_cost : float
+        Small cost on DR activation (€/MWh per direction/Link, from config
+        load.demand_response.activation_cost), applied identically to both
+        the up and the down Link. Breaks ties so the solver does not run up
+        and down in the same hour.
     """
     ds = xr.open_dataset(profile_fn)
     e_bounds = {"both": (-1.0, 1.0), "delay": (-1.0, 0.0), "advance": (0.0, 1.0)}
 
-    #small cost on DR activation. Breaks ties so the solver does not run up and down in the same hour. 
-    dr_marginal_cost = 0.05 #€/MWh
+    dr_marginal_cost = activation_cost  # €/MWh, applied per direction (Link)
 
 
     n.add("Carrier", [f"DR {dev}" for dev in devices])
@@ -1344,6 +1349,7 @@ def main(
             n,
             inputs["dr_profile"],
             dr_device_groups(dr["devices"], dr.get("group_by_shift", False)),
+            dr.get("activation_cost", 0.05),
         )
 
     set_transmission_costs(

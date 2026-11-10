@@ -500,6 +500,7 @@ load:
     enable: false
     group_by_shift: false   # merge devices with equal shift_time and direction
     data_dir: data/demand_response/achievable
+    activation_cost: 0.05   # EUR/MWh, applied per direction (per Link); cost per MWh shifted is therefore twice this value
     devices:
       WM:
         shift_time: 6

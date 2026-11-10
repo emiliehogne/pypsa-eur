@@ -86,9 +86,20 @@ class _DemandResponseConfig(ConfigModel):
     enable: bool = Field(
         False, description="Whether to add residential demand response."
     )
+    group_by_shift: bool = Field(
+        False,
+        description="Merge devices with equal shift_time and direction into one combined DR carrier/Link/Store.",
+    )
     data_dir: str = Field(
         "data/demand_response/achievable",
         description="Directory with prepare_dr_data.py's per-device, per-year CSV output.",
+    )
+    activation_cost: float = Field(
+        0.05,
+        ge=0,
+        description="Small cost (EUR/MWh) on DR activation, applied per direction (i.e. to each of the up and "
+        "down Link separately), to break solver ties so up- and down-shifting are not both run in the same "
+        "hour. The cost per MWh actually shifted is therefore twice this value.",
     )
     devices: dict[str, _DeviceDRConfig] = Field(
         default_factory=_default_dr_devices,
