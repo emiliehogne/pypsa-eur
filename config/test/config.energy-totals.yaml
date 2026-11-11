@@ -7,8 +7,3 @@ run:
 
 sector:
   enabled: true              # the sector rules (incl. build_energy_totals) need this
-
-data:
-  swiss_energy_balances:
-    source: archive          # the live Swiss file has changed row names; use the archived copy
- 
