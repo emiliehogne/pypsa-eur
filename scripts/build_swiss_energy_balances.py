@@ -18,7 +18,28 @@ def load_sheet(xlsx: pd.ExcelFile, sheet_name: str, index_col: str) -> pd.DataFr
     df = xlsx.parse(sheet_name, skiprows=5, index_col=index_col)
     year_columns = [col for col in df.columns if isinstance(col, int)]
     df = df[year_columns].dropna(how="all", axis=0)
+    df.index = df.index.astype(str).str.strip()
     return df
+
+
+def pick(df: pd.DataFrame, *labels: str) -> pd.Series:
+    """
+    Return the first row label that exists. The BFE file renamed some rows
+    between editions (e.g. 'Total Endenergieverbrauch' -> 'Total'), so older
+    and newer names are both accepted.
+    """
+    for label in labels:
+        if label in df.index:
+            return df.loc[label]
+    raise KeyError(f"None of {labels} found. Available rows: {list(df.index)}")
+
+
+def pick_sum(df: pd.DataFrame, *labels: str) -> pd.Series:
+    """Sum of several rows (used where one row was split into two)."""
+    missing = [label for label in labels if label not in df.index]
+    if missing:
+        raise KeyError(f"{missing} not found. Available rows: {list(df.index)}")
+    return df.loc[list(labels)].sum()
 
 
 if __name__ == "__main__":
@@ -46,30 +67,39 @@ if __name__ == "__main__":
 
     tab38 = load_sheet(xlsx, "Tabelle38", index_col="Verkehrsträger")
 
+    # residential cooking: old file had one row "Kochen / Geschirrspüler",
+    # the 2000-2025 edition splits it into "Kochen" and "Geschirrspüler"
+    if "Kochen / Geschirrspüler" in tab17.index:
+        residential_cooking = tab17.loc["Kochen / Geschirrspüler"]
+    else:
+        residential_cooking = pick_sum(tab17, "Kochen", "Geschirrspüler")
+
     data = {
-        "total residential": tab17.loc["Total Endenergieverbrauch"],
-        "total residential space": tab17.loc["Raumwärme"],
-        "total residential water": tab17.loc["Warmwasser"],
-        "total residential cooking": tab17.loc["Kochen / Geschirrspüler"],
-        "electricity residential": tab18.loc["Total"],
-        "electricity residential space": tab18.loc["Raumwärme"],
-        "electricity residential water": tab18.loc["Warmwasser"],
-        "electricity residential cooking": tab18.loc["Kochherde"],
-        "total services": tab26.loc["Total Endenergie"],
-        "total services space": tab26.loc["Raumwärme"],
-        "total services water": tab26.loc["Warmwasser"],
-        "total services cooking": tab26.loc["Prozesswärme"],
-        "electricity services": tab28.loc["Total Elektrizität"],
-        "electricity services space": tab28.loc["Raumwärme"],
-        "electricity services water": tab28.loc["Warmwasser"],
-        "electricity services cooking": tab28.loc["Prozesswärme"],
-        "total rail": tab35.loc["Schiene"],
-        "total road": tab35.loc["Strasse"],
-        "electricity road": tab38.loc["Strasse"],
-        "electricity rail": tab38.loc["Schiene"],
-        "total domestic aviation": tab35.loc["Luft (Inland)"],
-        "total international aviation": tab1.loc["int. Flugverkehr"],
-        "total domestic navigation": tab35.loc["Wasser"],
+        "total residential": pick(tab17, "Total Endenergieverbrauch", "Total"),
+        "total residential space": pick(tab17, "Raumwärme"),
+        "total residential water": pick(tab17, "Warmwasser"),
+        "total residential cooking": residential_cooking,
+        "electricity residential": pick(tab18, "Total"),
+        "electricity residential space": pick(tab18, "Raumwärme"),
+        "electricity residential water": pick(tab18, "Warmwasser"),
+        "electricity residential cooking": pick(tab18, "Kochherde"),
+        "total services": pick(tab26, "Total Endenergie", "Total"),
+        "total services space": pick(tab26, "Raumwärme"),
+        "total services water": pick(tab26, "Warmwasser"),
+        "total services cooking": pick(tab26, "Prozesswärme"),
+        "electricity services": pick(tab28, "Total Elektrizität", "Total"),
+        "electricity services space": pick(tab28, "Raumwärme"),
+        "electricity services water": pick(tab28, "Warmwasser"),
+        "electricity services cooking": pick(tab28, "Prozesswärme"),
+        "total rail": pick(tab35, "Schiene", "Schiene*"),
+        "total road": pick(tab35, "Strasse"),
+        "electricity road": pick(tab38, "Strasse"),
+        "electricity rail": pick(tab38, "Schiene", "Schiene*"),
+        "total domestic aviation": pick(tab35, "Luft (Inland)"),
+        "total international aviation": pick(
+            tab1, "int. Flugverkehr", "Internationaler Flugverkehr", "int. Flugverkehr*"
+        ),
+        "total domestic navigation": pick(tab35, "Wasser"),
         "total international navigation": 0,
     }
 
