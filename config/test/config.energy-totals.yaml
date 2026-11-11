@@ -1,0 +1,9 @@
+# Only used to build PyPSA-Eur's energy_totals.csv (today's energy use per
+# country and sector) for the 2050 demand work. Nothing is solved.
+# Layer on top of the usual DR configs so the country list is the same.
+
+run:
+  name: energy_totals_2050   # files end up in resources/energy_totals_2050/
+
+sector:
+  enabled: true              # the sector rules (incl. build_energy_totals) need this
