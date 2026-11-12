@@ -45,7 +45,11 @@ def get_compose_inputs(w):
             if cfg["co2_budget"]["relative"]
             else []
         ),
-        load=resources("electricity_demand.nc"),
+        load=(
+            cfg["load"]["demand_file"]
+            if cfg["load"].get("demand_file")
+            else resources("electricity_demand.nc")
+        ),
         dr_profile=(
             resources(f"demand_response_profile_{horizon}.nc")
             if cfg["load"]["demand_response"]["enable"]

@@ -128,6 +128,10 @@ class LoadConfig(BaseModel):
         False,
         description="To specify a fixed year for the load time series that deviates from the snapshots' year.",
     )
+    demand_file: str | None = Field(
+        None,
+        description="Path to a pre-built clustered demand file (same format as resources/electricity_demand.nc: time x bus, MW) used instead of the PyPSA-Eur demand, e.g. a 2050 demand. Bus names must match the clustered network.",
+    )
     supplement_synthetic: bool = Field(
         True,
         description="Whether to supplement missing data for selected time period should be supplemented by synthetic data from `Zenodo <https://zenodo.org/records/10820928>`_.",

@@ -491,6 +491,7 @@ load:
   manual_adjustments: true
   scaling_factor: 1.0
   fixed_year: false
+  demand_file: null   # path to a pre-built clustered demand (e.g. 2050); null = PyPSA-Eur's own demand
   supplement_synthetic: true
   substation_only: true
   distribution_key:
