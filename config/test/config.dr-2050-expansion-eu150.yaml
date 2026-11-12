@@ -2,17 +2,17 @@
 # All PyPSA-Eur countries, 37 nodes, 2013 weather, 2050 costs, zero CO2.
 # Layer on top of config.dr-test.yaml + config.dr-eu100.yaml, like the other EU runs:
 #
-#   snakemake -call results/EU100_2050_expansion_nodr/networks/solved_2050.nc \
+#   snakemake -call results/EU150_2050_expansion_nodr/networks/solved_2050.nc \
 #     --configfile config/test/config.dr-test.yaml \
 #                  config/test/config.dr-eu100.yaml \
-#                  config/test/config.dr-2050-expansion-eu100.yaml \
+#                  config/test/config.dr-2050-expansion-eu150.yaml \
 #                  config/config.solver-thesis.yaml
 #
 # STARTER VERSION: the lines marked TODO are design choices to agree on with
 # the group / Mostafa before the final runs.
 
 run:
-  name: EU100_2050_expansion_nodr
+  name: EU150_2050_expansion_nodr
 
 planning_horizons:
 - 2050
@@ -32,7 +32,7 @@ co2_budget:
 
 clustering:
   cluster_network:
-    n_clusters: 100        # start small: 37 -> 50 -> 100 -> 150
+    n_clusters: 150        # start small: 37 -> 50 -> 100 -> 150
   temporal:
     averaging: false      # hourly. If memory runs out at high node counts,
                           # try "3h" here (step 1 only; step 2 stays hourly)
@@ -43,7 +43,7 @@ electricity:
   extendable_carriers:    # overrides the empty lists in config.dr-eu100.yaml
     Generator: [solar, solar-hsat, onwind, offwind-ac, offwind-dc, offwind-float]
     StorageUnit: []
-    Store: [battery, H2]  # adds battery inverters and H2 electrolysis/fuel cells
+    Store: []  # adds battery inverters and H2 electrolysis/fuel cells
     Link: []
   # TODO: which of today's power plants still exist in 2050? This keeps plants
   # with a closing year after 2050, OR no closing year in the data (many plants).
@@ -51,12 +51,12 @@ electricity:
   # v1.0 = today's grid plus planned projects (transmission_projects) with
   # build year up to 2050. TODO: also allow the model to expand the grid
   # (e.g. v1.25 or vopt)?
-  transmission_limit: v1.0
+  transmission_limit: v1.25
 
 # ---------- demand ----------
 
 load:
   demand_response:
-    enable: false         # step 1 is designed WITHOUT DR (Mostafa)
-  # TODO: 2050 demand per country (friend's part). Until that is ready, this run
-  # uses the same demand as the 2025 runs (load.fixed_year from config.dr-test.yaml).
+    enable: false 
+  demand_file: data/demand_2050/eu150/electricity_demand_2050.nc
+       
