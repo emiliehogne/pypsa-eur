@@ -2,17 +2,17 @@
 # All PyPSA-Eur countries, 37 nodes, 2013 weather, 2050 costs, zero CO2.
 # Layer on top of config.dr-test.yaml + config.dr-eu100.yaml, like the other EU runs:
 #
-#   snakemake -call results/EU37_2050_expansion_nodr/networks/solved_2050.nc \
+#   snakemake -call results/EU100_2050_expansion_nodr/networks/solved_2050.nc \
 #     --configfile config/test/config.dr-test.yaml \
 #                  config/test/config.dr-eu100.yaml \
-#                  config/test/config.dr-2050-expansion-eu37.yaml \
+#                  config/test/config.dr-2050-expansion-eu100.yaml \
 #                  config/config.solver-thesis.yaml
 #
 # STARTER VERSION: the lines marked TODO are design choices to agree on with
 # the group / Mostafa before the final runs.
 
 run:
-  name: EU37_2050_expansion_nodr
+  name: EU100_2050_expansion_nodr
 
 planning_horizons:
 - 2050
@@ -32,7 +32,7 @@ co2_budget:
 
 clustering:
   cluster_network:
-    n_clusters: 37        # start small: 37 -> 50 -> 100 -> 150
+    n_clusters: 100        # start small: 37 -> 50 -> 100 -> 150
   temporal:
     averaging: false      # hourly. If memory runs out at high node counts,
                           # try "3h" here (step 1 only; step 2 stays hourly)
