@@ -25,7 +25,8 @@ When (hourly shape):
   transport       PyPSA-Eur road transport profile
   industry growth flat
 
-Annual totals per country and sector come from build_2050_country_demand.py.
+Annual totals per country and sector come from build_2050_country_demand_tyndp.py
+(TYNDP 2026) or build_2050_country_demand.py (JRC CETO 2025); both write the same columns.
 Each country is rescaled at the end so its annual 2050 total matches those totals exactly.
 
 Usage:
@@ -117,7 +118,11 @@ parts23["ser_heat"] = ser_heat23
 parts23["transport"] = t23["transport"]
 parts50 = pd.DataFrame(index=C)
 parts50["res_heat"] = t50["residential heat/cooling/cooking"]
-parts50["ser_heat"] = ser_heat23 * fac["services"]
+# services heat 2050: from the country file if given (TYNDP ETM), else today's x services growth
+ser_heat50 = ser_heat23 * fac["services"]
+if "services heat" in t50.columns:
+    ser_heat50 = t50["services heat"].reindex(C).fillna(ser_heat50.reindex(C))
+parts50["ser_heat"] = ser_heat50
 parts50["transport"] = t50["transport"]
 parts50["industry_extra"] = t50["industry+other"] - t23["industry+other"]
 # everything else (appliances, services excl. heat, agriculture, today's industry)
@@ -156,6 +161,9 @@ heat50 = heat_profile(parts50["res_heat"], parts50["ser_heat"], "2050")
 tr50 = tr_shape * by_node(parts50["transport"], tr_share)
 ind50 = pd.DataFrame(1 / len(time), index=time, columns=nodes) * by_node(parts50["industry_extra"], ind_key)
 L50 = L50 + heat50 + tr50 + ind50
+# industry_extra can be negative (industry shrinks); never let a node-hour go below zero
+neg50 = (L50 < 0).sum().sum() / L50.size
+L50 = L50.clip(lower=0)
 
 # rescale each country to its annual total from build_2050_country_demand.py
 scale = total50 / (L50.sum().groupby(ctry).sum() / 1e6)
@@ -182,6 +190,7 @@ csum["peak_growth"] = csum["2050_peak_GW"] / csum["today_peak_GW"]
 csum.round(3).to_csv(out_dir / "country_summary_2050.csv")
 
 print(f"Hours where today's load minus heat/transport went negative (set to 0): {neg_share:.2%}")
+print(f"2050 node-hours below zero before clipping: {neg50:.2%}")
 print("Rescale factors per country (should be close to 1):")
 print(scale.round(3).describe())
 pd.set_option("display.width", 200)
