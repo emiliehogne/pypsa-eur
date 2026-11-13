@@ -1,0 +1,24 @@
+# 2050 capacity expansion WITH residential DR (step 2 of the 2050 work).
+# Identical to config.dr-2050-expansion-eu150.yaml (150 nodes, 2013 weather,
+# 2050 costs, zero CO2, 2050 demand file) but with DR switched on.
+# Layer AFTER config.dr-2050-expansion-eu150.yaml:
+#
+#   snakemake -call results/EU150_2050_expansion_dr/networks/solved_2050.nc \
+#     --configfile config/test/config.dr-test.yaml \
+#                  config/test/config.dr-eu100.yaml \
+#                  config/test/config.dr-2050-expansion-eu150.yaml \
+#                  config/test/config.dr-2050-expansion-eu150-dr.yaml \
+#                  config/config.solver-thesis.yaml
+#
+# DR data: data/demand_response/achievable/*_2050.csv = O'Reilly et al. 2050
+# potential x country participation rates (rates are not year-specific).
+# Shift times: O'Reilly defaults (config.default.yaml). Activation cost:
+# default 0.05 EUR/MWh.
+
+run:
+  name: EU150_2050_expansion_dr
+
+load:
+  demand_response:
+    enable: true
+    group_by_shift: true    # 5 device groups, like the EU150 2025 DR runs
