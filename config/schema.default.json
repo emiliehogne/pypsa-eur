@@ -5406,6 +5406,18 @@
               "description": "To avoid too small values in the renewables` per-unit availability time series values below this threshold are set to zero.",
               "type": "number"
             },
+            "fix_capacities_from": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "description": "Path to a solved network whose optimal capacities (p_nom_opt, e_nom_opt, s_nom_opt) are fixed before solving, so only dispatch is optimised. Components not in that network (e.g. demand response) are left untouched."
+            },
             "load_shedding": {
               "description": "Configuration for `solving.options.load_shedding` settings.",
               "properties": {
@@ -8175,6 +8187,18 @@
           "default": 0.01,
           "description": "To avoid too small values in the renewables` per-unit availability time series values below this threshold are set to zero.",
           "type": "number"
+        },
+        "fix_capacities_from": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Path to a solved network whose optimal capacities (p_nom_opt, e_nom_opt, s_nom_opt) are fixed before solving, so only dispatch is optimised. Components not in that network (e.g. demand response) are left untouched."
         },
         "load_shedding": {
           "description": "Configuration for `solving.options.load_shedding` settings.",
@@ -12836,6 +12860,18 @@
               "default": 0.01,
               "description": "To avoid too small values in the renewables` per-unit availability time series values below this threshold are set to zero.",
               "type": "number"
+            },
+            "fix_capacities_from": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "description": "Path to a solved network whose optimal capacities (p_nom_opt, e_nom_opt, s_nom_opt) are fixed before solving, so only dispatch is optimised. Components not in that network (e.g. demand response) are left untouched."
             },
             "load_shedding": {
               "description": "Configuration for `solving.options.load_shedding` settings.",

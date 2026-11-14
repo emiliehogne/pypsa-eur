@@ -1,0 +1,25 @@
+# 2050 step 3: operations only WITH DR (achievable), capacities fixed from
+# step 1 (EU150_2050_expansion_nodr). Same system, demand and weather as step 1.
+# Layer AFTER config.dr-2050-expansion-eu150.yaml:
+#
+#   snakemake -call results/EU150_2050_ops_dr/networks/solved_2050.nc \
+#     --configfile config/test/config.dr-test.yaml \
+#                  config/test/config.dr-eu100.yaml \
+#                  config/test/config.dr-2050-expansion-eu150.yaml \
+#                  config/test/config.dr-2050-ops-eu150-dr.yaml \
+#                  config/config.solver-thesis.yaml
+#
+# DR data: data/demand_response/achievable/*_2050.csv (O'Reilly et al.).
+# Shift times: O'Reilly defaults. Activation cost: default 0.05 EUR/MWh.
+
+run:
+  name: EU150_2050_ops_dr
+
+solving:
+  options:
+    fix_capacities_from: results/EU150_2050_expansion_nodr/networks/solved_2050.nc
+
+load:
+  demand_response:
+    enable: true
+    group_by_shift: true    # 5 device groups, like the EU150 2025 DR runs

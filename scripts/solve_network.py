@@ -464,6 +464,41 @@ def add_load_balance_components(n, config, sign=1):
         )
 
 
+def fix_capacities(n: pypsa.Network, reference_fn: str) -> None:
+    """
+    Fix capacities to the optimised values of a solved reference network.
+
+    Every Generator, StorageUnit, Store, Link and Line that also exists in the
+    reference network gets its nominal capacity set to the reference's optimum
+    and is made non-extendable, so only dispatch is optimised. Components that
+    only exist in n (e.g. demand-response links and stores) are left untouched.
+    Load-shedding generators of the reference are ignored, since they are
+    added again at solve time.
+
+    Parameters
+    ----------
+    n : pypsa.Network
+        The network to modify in place.
+    reference_fn : str
+        Path to the solved reference network.
+    """
+    ref = pypsa.Network(reference_fn)
+    for c in n.components[["Generator", "StorageUnit", "Store", "Link", "Line"]]:
+        attr = {"Store": "e_nom", "Line": "s_nom"}.get(c.name, "p_nom")
+        ref_static = ref.components[c.name].static
+        ref_static = ref_static[ref_static.carrier != "load"]
+        missing = ref_static.index.difference(c.static.index)
+        if not missing.empty:
+            raise ValueError(
+                f"{len(missing)} {c.name}s from {reference_fn} are missing in this "
+                f"network (e.g. {list(missing[:3])}); networks do not match."
+            )
+        common = ref_static.index
+        c.static.loc[common, attr] = ref_static[f"{attr}_opt"]
+        c.static.loc[common, f"{attr}_extendable"] = False
+        logger.info(f"Fixed {attr} of {len(common)} {c.name}s from {reference_fn}.")
+
+
 def prepare_network(
     n: pypsa.Network,
     config: dict,
@@ -1508,6 +1543,8 @@ if __name__ == "__main__":
 
     # Load network
     n = pypsa.Network(snakemake.input.network)
+    if snakemake.input.get("fixed_capacities"):
+        fix_capacities(n, snakemake.input.fixed_capacities)
     planning_horizons = snakemake.wildcards.horizon
 
     # Prepare network (settings before solving)

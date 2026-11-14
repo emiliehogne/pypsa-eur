@@ -6,6 +6,10 @@
 rule solve_network:
     input:
         network=resources("networks/composed_{horizon}.nc"),
+        fixed_capacities=lambda w: (
+            config_provider("solving", "options", "fix_capacities_from", default=None)(w)
+            or []
+        ),
     output:
         network=RESULTS + "networks/solved_{horizon}.nc",
         model=(

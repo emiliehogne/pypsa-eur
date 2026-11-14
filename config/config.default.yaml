@@ -1243,6 +1243,7 @@ adjustments:
 solving:
   options:
     clip_p_max_pu: 0.01
+    fix_capacities_from: null   # path to a solved network whose optimal capacities are fixed (operations-only re-solve); null = off
     load_shedding:
       enable: false
       default_cost: 100000

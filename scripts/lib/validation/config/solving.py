@@ -120,6 +120,10 @@ class _SolvingOptionsConfig(BaseModel):
         0.01,
         description="To avoid too small values in the renewables` per-unit availability time series values below this threshold are set to zero.",
     )
+    fix_capacities_from: str | None = Field(
+        None,
+        description="Path to a solved network whose optimal capacities (p_nom_opt, e_nom_opt, s_nom_opt) are fixed before solving, so only dispatch is optimised. Components not in that network (e.g. demand response) are left untouched.",
+    )
     load_shedding: _LoadSheddingConfig = Field(
         default_factory=_LoadSheddingConfig,
         description="Load shedding settings.",
