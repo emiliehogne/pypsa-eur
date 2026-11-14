@@ -43,7 +43,7 @@ electricity:
   extendable_carriers:    # overrides the empty lists in config.dr-eu100.yaml
     Generator: [solar, solar-hsat, onwind, offwind-ac, offwind-dc, offwind-float]
     StorageUnit: []
-    Store: []  # adds battery inverters and H2 electrolysis/fuel cells
+    Store: [battery, H2]   # adds battery inverters and H2 electrolysis/fuel cells
     Link: []
   # TODO: which of today's power plants still exist in 2050? This keeps plants
   # with a closing year after 2050, OR no closing year in the data (many plants).
