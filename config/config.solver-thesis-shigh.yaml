@@ -1,0 +1,15 @@
+# Solver settings for the high shift time runs. Use as the LAST --configfile.
+# Barrier stalled near the optimum with the default settings (plow shigh, Nov 2026).
+# BarHomogeneous handles that better, and BarConvTol 1e-6 still gives a cost
+# difference well under 1 M€.
+solving:
+  solver:
+    name: gurobi
+    options: gurobi-default
+  solver_options:
+    gurobi-default:
+      threads: 8
+      crossover: 0
+      BarConvTol: 1.e-6
+      BarHomogeneous: 1
+      NumericFocus: 1
