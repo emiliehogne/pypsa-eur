@@ -1,0 +1,7 @@
+# config/test/config.dr-eu150-plow-smid-c6.2.yaml
+# Activation cost 0.5x the base-case saving per shifted MWh (12.39). Layer after config.dr-eu150-plow-smid.yaml.
+run:
+  name: EU150_w13_plow_smid_g_c6.2_dr
+load:
+  demand_response:
+    activation_cost: 3.10    # per direction = 6.2 EUR/MWh shifted
