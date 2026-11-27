@@ -12,7 +12,7 @@ Bruk:
 
     ps.save_table(df, "8_1_2_total_cost", caption="...", label="tab:total_cost")
 
-Regler (se også CLAUDE.md):
+Regler:
 - Farger hentes ALLTID herfra. Aldri skriv hex-koder i egne skript.
 - En farge følger en teknologi/apparatgruppe/case, aldri rekkefølgen i plottet.
 - Med DR = blå, uten DR = grå. Overalt.
