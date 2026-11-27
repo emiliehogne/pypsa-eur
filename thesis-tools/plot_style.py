@@ -12,7 +12,7 @@ Bruk:
 
     ps.save_table(df, "8_1_2_total_cost", caption="...", label="tab:total_cost")
 
-Regler:
+Regler (se også CLAUDE.md):
 - Farger hentes ALLTID herfra. Aldri skriv hex-koder i egne skript.
 - En farge følger en teknologi/apparatgruppe/case, aldri rekkefølgen i plottet.
 - Med DR = blå, uten DR = grå. Overalt.
@@ -85,43 +85,49 @@ CARRIER_GROUPS = {
     "PHS": "Storage", "battery": "Storage", "H2": "Storage",
 }
 
-# Apparatgrupper (5 farger, validert i denne rekkefølgen).
-APPLIANCE_GROUP_COLORS = {
-    "Heating": "#4a7fc1",
-    "Wet appliances": "#e0874a",
-    "Cold appliances": "#1c9bb0",
-    "EV": "#dca52a",
-    "Cooling": "#c9679a",
+# DR-grupper. Kjøringene grupperer apparater med lik skiftetid og retning
+# (group_by_shift: true), f.eks. "WM-TD-DW". Fem grupper, fem farger (validert).
+DR_GROUP_COLORS = {
+    "Wet appliances": "#4a7fc1",        # WM, TD, DW   S = 6 h, begge retninger
+    "Heating & hot water": "#e0874a",   # SH, WH       S = 12 h, fremskyve
+    "Cold & pumps": "#1c9bb0",          # RF, FR, AC, CP  S = 2 h, utsette
+    "EV": "#dca52a",                    # EV           S = 4 h, utsette
+    "Heat pump": "#c9679a",             # HP           S = 2 h, fremskyve
 }
-APPLIANCE_GROUPS = {
-    "SH": "Heating", "WH": "Heating", "HP": "Heating", "CP": "Heating",
-    "WM": "Wet appliances", "DW": "Wet appliances", "TD": "Wet appliances",
-    "RF": "Cold appliances", "FR": "Cold appliances",
+DEVICE_GROUP = {
+    "WM": "Wet appliances", "TD": "Wet appliances", "DW": "Wet appliances",
+    "SH": "Heating & hot water", "WH": "Heating & hot water",
+    "RF": "Cold & pumps", "FR": "Cold & pumps", "AC": "Cold & pumps", "CP": "Cold & pumps",
     "EV": "EV",
-    "AC": "Cooling",
+    "HP": "Heat pump",
 }
-APPLIANCE_NAMES = {
+DEVICE_NAMES = {
     "SH": "Space heating", "WH": "Water heater", "HP": "Heat pump", "CP": "Circulation pump",
     "WM": "Washing machine", "DW": "Dishwasher", "TD": "Tumble dryer",
     "RF": "Refrigerator", "FR": "Freezer", "EV": "Electric vehicle", "AC": "Air conditioning",
 }
 
+
+def dr_group(name: str) -> str:
+    """'WM-TD-DW' eller 'WM' -> 'Wet appliances'."""
+    return DEVICE_GROUP[name.split("-")[0]]
+
+
 # Faste case-navn i figurer og tabeller. Nøkkel = navnet i resultatloggen.
 # TODO: tilpass nøklene til de faktiske kjøringsnavnene i resultatloggen.
 CASE_LABELS = {
-    "base": "Base",
-    "part_mid": "Participation: middle",
-    "part_100": "Participation: 100 %",
-    "shift_low": "Shift time: low",
-    "shift_high": "Shift time: high",
-    "weather_low": "Weather: low RES",
-    "weather_high": "Weather: high RES",
-    "ac_half": "Activation cost: 0.5×",
-    "ac_1x": "Activation cost: 1×",
-    "ac_4x": "Activation cost: 4×",
-    "ac_high": "Activation cost: high",
-    "2050": "2050",
+    "EU150_w13_plow_smid_g_dr": "Base",
+    "EU150_w13_pmid_smid_g_dr": "Participation: middle",
+    "EU150_w13_phigh_smid_g_dr": "Participation: 100 %",
+    "EU150_w13_plow_slow_g_dr": "Shift time: low",
+    "EU150_w13_plow_shigh_g_dr": "Shift time: high",
+    "EU150_w13_plow_smid_g_c6.2_dr": "Activation cost: 6.2 €/MWh",
+    "EU150_w13_plow_smid_g_c12.4_dr": "Activation cost: 12.4 €/MWh",
+    "EU150_w13_plow_smid_g_c49.6_dr": "Activation cost: 49.6 €/MWh",
+    # TODO: værår, høyeste kostnadsnivå og 2050 når kjøringene finnes
 }
+BASE = "EU150_w13_plow_smid_g_dr"
+NODR = "EU150_w13_base_nodr"
 
 
 def sequential(n: int, hue: str = "Blues") -> list:
@@ -217,10 +223,10 @@ def group_carriers(df: pd.DataFrame) -> pd.DataFrame:
     return grouped.reindex(columns=[g for g in TECH_COLORS if g in grouped.columns])
 
 
-def group_appliances(df: pd.DataFrame) -> pd.DataFrame:
-    """Kolonner = apparatkoder (WM, SH, ...) -> kolonner = apparatgrupper."""
-    grouped = df.T.groupby(lambda c: APPLIANCE_GROUPS[c]).sum().T
-    return grouped.reindex(columns=[g for g in APPLIANCE_GROUP_COLORS if g in grouped.columns])
+def group_dr(df: pd.DataFrame) -> pd.DataFrame:
+    """Kolonner = DR-gruppenavn fra modellen ('WM-TD-DW', ...) -> fem DR-grupper."""
+    grouped = df.T.groupby(dr_group).sum().T
+    return grouped.reindex(columns=[g for g in DR_GROUP_COLORS if g in grouped.columns])
 
 
 # ---------------------------------------------------------------------------
@@ -249,9 +255,10 @@ def price_timeseries(prices_dr: pd.Series, prices_nodr: pd.Series, ax=None,
     ax.plot(prices_nodr.index, prices_nodr.values, color=NO_DR, label="Without DR")
     ax.plot(prices_dr.index, prices_dr.values, color=DR, label="With DR")
     ax.set_ylabel(ylabel)
-    ax.legend(loc="upper right", ncols=2)
-    fig = ax.get_figure()
-    fig.autofmt_xdate()
+    ax.margins(x=0)
+    ax.xaxis.set_major_locator(mpl.dates.AutoDateLocator(maxticks=6))
+    ax.xaxis.set_major_formatter(mpl.dates.DateFormatter("%d %b"))
+    ax.legend(loc="lower left", bbox_to_anchor=(0, 1.0), ncols=2)
     return ax
 
 
@@ -275,7 +282,7 @@ def grouped_bar(df: pd.DataFrame, ax=None, ylabel: str = "Shifted energy [GWh]",
     ax.set_ylabel(ylabel)
     ax.grid(axis="x", visible=False)
     if n > 1:
-        ax.legend(loc="upper right")
+        ax.legend(loc="lower right", bbox_to_anchor=(1, 1.0), ncols=n)
     return ax
 
 
@@ -319,6 +326,67 @@ def dispatch_plot(gen: pd.DataFrame, demand: pd.Series, demand_nodr: pd.Series |
               loc="upper left", bbox_to_anchor=(1.01, 1), ncols=1)
     ax.margins(x=0)
     ax.get_figure().autofmt_xdate()
+    return ax
+
+
+def histogram_with_levels(values: pd.Series, weights: pd.Series | None = None,
+                          levels: dict | None = None, ax=None, bins: int = 60,
+                          xlim: tuple | None = None,
+                          xlabel: str = "Value per shifted MWh [€/MWh]",
+                          ylabel: str = "Share of shifted energy [%]"):
+    """Fordeling (f.eks. sparing per MWh flyttet), vektet med flyttet energi.
+    levels = {"0.5×": 6.2, "1×": 12.4, ...} tegnes som loddrette linjer med tekst."""
+    if ax is None:
+        _, ax = new_fig("full")
+    v = values.values
+    w = None if weights is None else weights.values / weights.values.sum() * 100
+    rng = xlim or (np.nanpercentile(v, 1), np.nanpercentile(v, 99))
+    if levels and not xlim:  # sørg for at alle nivålinjene er innenfor aksen
+        rng = (min(rng[0], 0), max(rng[1], max(levels.values()) * 1.08))
+    ax.hist(np.clip(v, *rng), bins=bins, range=rng, weights=w, color=DR,
+            edgecolor="white", linewidth=0.4)
+    ymax = ax.get_ylim()[1]
+    for label, x in (levels or {}).items():
+        ax.axvline(x, color=TEXT, lw=1.0, ls="--")
+        ax.text(x, ymax * 0.97, f" {label}", va="top", ha="left", fontsize=8, color=TEXT,
+                clip_on=True)
+    ax.set_xlim(*rng)
+    ax.set_xlabel(xlabel)
+    ax.set_ylabel(ylabel if weights is not None else "Count")
+    ax.grid(axis="x", visible=False)
+    return ax
+
+
+def daily_profile(df: pd.DataFrame, ax=None, ylabel: str = "Net load shift [GW]"):
+    """Gjennomsnittlig DR per time på døgnet. df: indeks 0-23, kolonner = DR-grupper.
+    Positiv = last lagt til (L_up), negativ = last fjernet (L_down)."""
+    if ax is None:
+        _, ax = new_fig("full")
+    for g in [g for g in DR_GROUP_COLORS if g in df.columns]:
+        ax.plot(df.index, df[g].values, color=DR_GROUP_COLORS[g], label=g)
+    ax.axhline(0, color="#b0b0b0", lw=0.6)
+    ax.set_xticks(range(0, 24, 3), [f"{h:02d}:00" for h in range(0, 24, 3)])
+    ax.set_xlim(0, 23)
+    ax.set_xlabel("Hour of day")
+    ax.set_ylabel(ylabel)
+    ax.legend(loc="upper left", bbox_to_anchor=(1.01, 1))
+    return ax
+
+
+def pair_fig():
+    """To figurer side om side i full bredde. Bruk i stedet for to y-akser."""
+    fig, axes = plt.subplots(1, 2, figsize=SIZES["full"], constrained_layout=True)
+    return fig, axes
+
+
+def line_by_level(x, y, ax, xlabel: str, ylabel: str, color: str = DR, labels=None):
+    """Én størrelse mot et nivå (f.eks. sparing mot aktiveringskostnad), med punkter."""
+    ax.plot(x, y, color=color, marker="o", markersize=5)
+    if labels is not None:
+        ax.set_xticks(x, labels)
+    ax.set_xlabel(xlabel)
+    ax.set_ylabel(ylabel)
+    ax.set_ylim(bottom=0)
     return ax
 
 
