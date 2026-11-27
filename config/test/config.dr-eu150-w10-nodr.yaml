@@ -1,7 +1,12 @@
-# No-DR reference for all EU100 runs with 2010 weather.
-# Layer on top of config.dr-test.yaml + config.dr-eu100.yaml + config.dr-eu100-w10.yaml.
+# EU150 no-DR reference with 2010 weather.
+# Layer after config.dr-eu150-w10.yaml:
+#
+#   snakemake --cores 20 results/EU150_w10_base_nodr/networks/solved_2025.nc \
+#     --configfile config/test/config.dr-test.yaml config/test/config.dr-eu100.yaml \
+#                  config/test/config.dr-eu150-w10.yaml config/test/config.dr-eu150-w10-nodr.yaml \
+#                  config/config.solver-thesis.yaml
 run:
-  name: EU100_w10_nodr
+  name: EU150_w10_base_nodr
 
 load:
   demand_response:

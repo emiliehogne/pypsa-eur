@@ -1,7 +1,13 @@
-# Full Europe DR run with 2010 weather and 100% participation (theoretical
-# potential). Layer on top of config.dr-test.yaml + config.dr-eu100.yaml.
+# EU150 base case (achievable participation, O'Reilly shift times, default
+# activation cost 0.05 EUR/MWh, grouped) with 2010 weather.
+# Same as config.dr-eu150-plow-smid.yaml (2013) except for the weather year.
+# Layer on top of config.dr-test.yaml + config.dr-eu100.yaml:
+#
+#   snakemake --cores 20 results/EU150_w10_plow_smid_g_dr/networks/solved_2025.nc \
+#     --configfile config/test/config.dr-test.yaml config/test/config.dr-eu100.yaml \
+#                  config/test/config.dr-eu150-w10.yaml config/config.solver-thesis.yaml
 run:
-  name: EU100_w10_full_dr
+  name: EU150_w10_plow_smid_g_dr
 
 atlite:
   default_cutout: "europe-2010-sarah3-era5"
@@ -11,11 +17,10 @@ snapshots:
   end: "2011-01-01"
   inclusive: left
 
+clustering:
+  cluster_network:
+    n_clusters: 150
+
 load:
   demand_response:
-    data_dir: data/demand_response/theoretical
-
-solving:
-  solver:
-    name: gurobi
-    options: gurobi-default
+    group_by_shift: true

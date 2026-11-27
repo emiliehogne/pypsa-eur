@@ -1,7 +1,12 @@
-# No-DR reference for all EU100 runs with 2020 weather.
-# Layer on top of config.dr-test.yaml + config.dr-eu100.yaml + config.dr-eu100-w20.yaml.
+# EU150 no-DR reference with 2020 weather.
+# Layer after config.dr-eu150-w20.yaml:
+#
+#   snakemake --cores 20 results/EU150_w20_base_nodr/networks/solved_2025.nc \
+#     --configfile config/test/config.dr-test.yaml config/test/config.dr-eu100.yaml \
+#                  config/test/config.dr-eu150-w20.yaml config/test/config.dr-eu150-w20-nodr.yaml \
+#                  config/config.solver-thesis.yaml
 run:
-  name: EU100_w20_nodr
+  name: EU150_w20_base_nodr
 
 load:
   demand_response:
